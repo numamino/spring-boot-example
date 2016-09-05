@@ -1,0 +1,78 @@
+description 'spring-boot 1.4 with thymeleaf 3'
+
+buildscript {
+	ext {
+		springBootVersion = '1.4.0.RELEASE'
+		encoding = 'UTF-8'
+		compatibility = 1.8
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+
+jar {
+	baseName = 'spring-boot-example'
+	version = '0.0.1-SNAPSHOT'
+}
+
+sourceCompatibility = compatibility
+targetCompatibility = compatibility
+
+tasks.withType(AbstractCompile) each { it.options.encoding = encoding }
+tasks.withType(GroovyCompile) each { it.groovyOptions.encoding = encoding }
+
+bootRun {
+	addResources = true
+	if (project.hasProperty('args')) {
+		args project.args.split('\\s+')
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext['thymeleaf.version'] = '3.0.1.RELEASE'
+ext['thymeleaf-layout-dialect.version'] = '2.0.0'
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-web')
+
+	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+	//<![if lt IE9]--><![endif]-->などのHTML条件付きコメント内部でthymeleafのexpressionを有効にする。
+	compile('org.thymeleaf.extras:thymeleaf-extras-conditionalcomments:2.1.1.RELEASE')
+
+	compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:1.1.1")
+	compile("org.mybatis:mybatis-typehandlers-jsr310:1.0.0")
+	runtime('org.postgresql:postgresql')
+
+    // view
+	runtime("org.webjars:bootstrap:3.3.4")
+	runtime("org.webjars:font-awesome:4.3.0-1")
+	runtime("org.webjars:html5shiv:3.7.2")
+	runtime("org.webjars:respond:1.4.2")
+
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile("junit:junit:4.12")
+	testCompile("org.spockframework:spock-core:1.0-groovy-2.4") {
+		exclude group: 'org.codehaus.groovy'
+	}
+	testCompile("org.spockframework:spock-spring:1.0-groovy-2.4") {
+		exclude group: 'org.codehaus.groovy'
+	}
+	testCompile('com.athaydes:spock-reports:1.2.12') {
+		exclude group: 'org.codehaus.groovy'
+		transitive = false // this avoids affecting your version of Groovy/Spock
+	}
+
+	compile("org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}")
+}

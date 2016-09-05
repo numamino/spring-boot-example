@@ -1,0 +1,21 @@
+# For idea
+.idea
+*.iml
+*.ipr
+*.iws
+
+# For Gradle
+**/build
+.gradle
+
+# For local
+temp
+
+# For mac
+.DS_Store
+
+# For windows
+Thumbs.db
+
+# log
+.log
